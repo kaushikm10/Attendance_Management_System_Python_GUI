@@ -196,7 +196,13 @@ def report(win,division, username):
             else:
                 def genearte():
                     df1=df[['Name of Student','Roll No.']+col]
+                    for c in col:
+                        df1[c] = df1[c].map({"A":0, "P":1})
+                    df1['Percentage'] = df1[col].sum(axis=1)*100/len(col)
+                    for c in col:
+                        df1[c] = df1[c].map({0:"A", 1:"P"})
                     df1.to_csv('Reports/'+month_var.get()+year_var.get()+'.csv')
+                    messagebox.showinfo("Info", "File saved in Reports folder")
                 per=str(round(present/(present+absent)*100,2))+"%"
                 Label(report, text='Month :', font=("Times", 20),bg='#efee9d').place(x=170,y=250)
                 Label(report, text=dt, font=("Times",20),bg='#efee9d').place(x=270,y=250)
