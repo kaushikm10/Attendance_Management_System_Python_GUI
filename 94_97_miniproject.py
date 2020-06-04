@@ -7,7 +7,7 @@ from datetime import datetime
 def take_attendance(win, division, username):
 
     def go_back():
-        R5.destroy()
+        root.destroy()
         main_window(division, username)
 
     df=pd.read_csv("{}.csv".format(division))
@@ -20,10 +20,17 @@ def take_attendance(win, division, username):
         for i in range(rows):
             df.loc[i, date]=vars[i].get()
 
+    def logout(win):
+        win.destroy()
+        login()
+
     win.destroy()
     root = Tk()
     root.geometry("600x600+0+0")
     root['bg']='#efee9d'
+
+    Button(root, text='Go Back',font=("Times", 12),bg='#ffcb74', command=go_back).place(x=40, y=520)
+    logout_button = Button(root, text='Logout', font=("Times", 12),bg='#ffcb74', command=lambda: logout(root)).place(x=500, y=520)
     container = Frame(root,bg='#efee9d')
     canvas = Canvas(container,height=500, width=470,bg='#efee9d')
     scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview,bg='#efee9d')
@@ -39,22 +46,29 @@ def take_attendance(win, division, username):
 
     canvas.configure(yscrollcommand=scrollbar.set)
 
+    Label(scrollable_frame, text='Roll No.', font=("Times", 20, 'bold'),bg='#efee9d').grid(row=0, column=0)
+    Label(scrollable_frame, text='Name of Student', font=("Times", 20, 'bold'),bg='#efee9d').grid(row=0, column=1)
+    Label(scrollable_frame, text='Attendance', font=("Times", 20, 'bold'),bg='#efee9d').grid(row=0, column=2)
+    j=3
+
     for i in range(rows):
-        Label(scrollable_frame, text=df.loc[i, 'Name of Student']+"   ",bg='#efee9d').pack()
-        Label(scrollable_frame, text=df.loc[i, 'Roll No.']).pack()
+
+        Label(scrollable_frame, text=df.loc[i, 'Roll No.'],bg='#efee9d').grid(row=j, column=0)
+        Label(scrollable_frame, text=df.loc[i, 'Name of Student'],bg='#efee9d').grid(row=j, column=1)
         l = ('A', 'P')
         var = StringVar()
         om = OptionMenu(scrollable_frame, var, *l)
-        om.config(indicatoron=0, compound=RIGHT)
+        om.config(indicatoron=0, compound=RIGHT,bg='#ffcb74')
         var.set("P")
-        om.pack()
+        om.grid(row=j, column=2)
         vars.append(var)
+        j += 1
 
     container.pack()
     canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
 
-    submit_button = Button(root, text='Submit', font=('Times', 13), command=setAttendance).pack()
+    submit_button = Button(root, text='Submit', font=("Times", 12),bg='#ffcb74', command=setAttendance).place(x=280,y=520)
     root.mainloop()
     df.to_csv("{}.csv".format(division),index=False)
 
@@ -62,6 +76,10 @@ def take_attendance(win, division, username):
 def edit(win, division, username):
 
     df = pd.read_csv("{}.csv".format(division))
+
+    def logout(win):
+        win.destroy()
+        login()
 
     def check_details():
         if day_var.get() != 'Day' and month_var.get() != 'Month' and year_var.get() != 'Year' and attendance.get() != 'N/A' and roll_no.get() != 0:
@@ -90,13 +108,17 @@ def edit(win, division, username):
 
     win.destroy()
     R5 = Tk()
-    R5.geometry("400x400+300+100")
+    R5.geometry("600x600+0+0")
     R5.resizable(height=False, width=False)
+    R5['bg']='#efee9d'
     roll_no = IntVar()
     roll_no.set(0)
-    Button(R5, text='Go Back', command=lambda: go_back()).place(x=160, y=280)
-    Label(R5, text='Enter Roll no.', font=("Times", 20, 'italic')).place(x=100, y=10)
-    Entry(R5, textvariable=roll_no).place(x=100, y=50)
+
+    Button(R5, text='Go Back',font=("Times", 12),bg='#ffcb74', command=lambda: go_back()).place(x=40, y=40)
+    logout_button = Button(R5, text='Logout', font=("Times", 12),bg='#ffcb74', command=lambda: logout(R5)).place(x=500, y=40)
+
+    Label(R5, text='Enter Roll no.', font=("Times", 20, 'italic'),bg='#efee9d').place(x=200, y=160)
+    Entry(R5, textvariable=roll_no).place(x=200, y=200)
 
     day_list = [str(i) for i in range(1, 32)]
     month_list = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
@@ -109,50 +131,92 @@ def edit(win, division, username):
     month_var.set("Month")
     year_var.set("Year")
 
-    Label(R5, text='Enter Date', font=("Times", 20, 'italic')).place(x=100, y=80)
+    Label(R5, text='Enter Date', font=("Times", 20, 'italic'),bg='#efee9d').place(x=200, y=230)
 
-    day_menu = OptionMenu(R5, day_var, *day_list).place(x=100, y=120)
-    month_menu = OptionMenu(R5, month_var, *month_list).place(x=170, y=120)
-    year_menu = OptionMenu(R5, year_var, *year_list).place(x=260, y=120)
+    day_menu = OptionMenu(R5, day_var, *day_list)
+    day_menu.place(x=200, y=270)
+    day_menu.config(bg='#ffcb74')
+
+    month_menu = OptionMenu(R5, month_var, *month_list)
+    month_menu.place(x=270, y=270)
+    month_menu.config(bg='#ffcb74')
+
+    year_menu = OptionMenu(R5, year_var, *year_list)
+    year_menu.place(x=360, y=270)
+    year_menu.config(bg='#ffcb74')
 
     attendance = StringVar()
-    Label(R5, text='Attendance', font=("Times", 20, 'italic')).place(x=100, y=165)
-    OptionMenu(R5, attendance, 'A', 'P').place(x=250, y=165)
-    attendance.set("N/A")
-    Button(R5, text='Edit Attendance', command=check_details).place(x=130, y=220)
+    Label(R5, text='Attendance', font=("Times", 20, 'italic'),bg='#efee9d').place(x=200, y=315)
+    om=OptionMenu(R5, attendance, 'A', 'P')
+    om.place(x=350, y=230)
+    om.config(bg='#ffcb74')
+    attendance.set("P")
+    Button(R5, text='Edit Attendance',bg='#ffcb74', command=check_details).place(x=230, y=370)
 
     R5.mainloop()
 
 
 def report(win,division, username):
 
+    df = pd.read_csv("{}.csv".format(division))
+
+    def logout(win):
+        win.destroy()
+        login()
+
     def go_back():
-        R5.destroy()
+        report.destroy()
         main_window(division, username)
 
     month_list = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     year_list = ['2019', '2020', '2021']
 
-    def check_date():
-        if month_var.get() != 'Month' and year_var.get() != 'Year':
-            print(1)
-#             view_data(day_var.get()+" "+month_var.get()+", "+year_var.get(), division, R5, date, username)
-        else:
-            messagebox.showerror("Error", "Enter month and year correctly")
     win.destroy()
     report = Tk()
     report.geometry("600x600+0+0")
     report.resizable(height=False, width=False)
+    report['bg']='#efee9d'
+
+    Button(report, text='Go Back',font=("Times", 12),bg='#ffcb74', command=lambda: go_back()).place(x=40, y=40)
+    logout_button = Button(report, text='Logout', font=("Times", 12),bg='#ffcb74', command=lambda: logout(report)).place(x=500, y=40)
+
+    def check_date():
+        if month_var.get() != 'Month' and year_var.get() != 'Year':
+            col=[]
+            present=0
+            absent=0
+            dt=month_var.get()+", "+year_var.get()
+            for i in df.columns:
+                if(dt in i):
+                    col.append(i)
+                    present=present+df[i].value_counts()['P']
+                    absent=absent+df[i].value_counts()['A']
+            if len(col)==0:
+                messagebox.showerror("Error", "No data for this month exists.")
+            else:
+                def genearte():
+                    df1=df[['Name of Student','Roll No.']+col]
+                    df1.to_csv('Reports/'+month_var.get()+year_var.get()+'.csv')
+                per=str(round(present/(present+absent)*100,2))+"%"
+                Label(report, text='Month :', font=("Times", 20),bg='#efee9d').place(x=170,y=250)
+                Label(report, text=dt, font=("Times",20),bg='#efee9d').place(x=270,y=250)
+                Label(report, text='Attendance:', font=("Times",20),bg='#efee9d').place(x=130,y=300)
+                Label(report, text=per, font=("Times",20),bg="#efee9d").place(x=270,y=300)
+                Button(report, text='Generate Sheet', font=("Times", 20),bg='#ffcb74',command=genearte).place(x=200,y=400)
+        else:
+            messagebox.showerror("Error", "Enter month and year correctly")
+
     month_var = StringVar()
     year_var = StringVar()
-
     month_var.set('Month')
     year_var.set('Year')
     month_menu = OptionMenu(report, month_var, *month_list)
-    month_menu.place(x=140, y=50)
+    month_menu.place(x=220, y=140)
+    month_menu.config(bg='#ffcb74')
     year_menu = OptionMenu(report, year_var, *year_list)
-    year_menu.place(x=230, y=50)
-    submit_button = Button(report, text='Submit', font=("Times", 12),command=check_date).place(x=150, y=100)
+    year_menu.place(x=310, y=140)
+    year_menu.config(bg='#ffcb74')
+    submit_button = Button(report, text='Submit', font=("Times", 12),bg='#ffcb74',command=check_date).place(x=260, y=200)
     report.mainloop()
 
 def view_data(req_date, division, win, username):
@@ -279,15 +343,15 @@ def main_window(division, username):
     # photo = ImageTk.PhotoImage(image)
     # Label(R4, image=photo).pack()
 
-    new_attend_img = ImageTk.PhotoImage(Image.open("new.PNG"))
-    edit_img = ImageTk.PhotoImage(Image.open("edit.PNG"))
-    report_img = ImageTk.PhotoImage(Image.open("report.PNG"))
-    view_img = ImageTk.PhotoImage(Image.open("view.PNG"))
+    # new_attend_img = ImageTk.PhotoImage(Image.open("new.PNG"))
+    # edit_img = ImageTk.PhotoImage(Image.open("edit.PNG"))
+    # report_img = ImageTk.PhotoImage(Image.open("report.PNG"))
+    # view_img = ImageTk.PhotoImage(Image.open("view.PNG"))
 
-    Button(R4, image=new_attend_img, bd=0, command=lambda: take_attendance(R4, division, username)).place(x=160, y=180, width=280)
-    Button(R4, image=edit_img, bd=0, command=lambda: edit(R4,division, username)).place(x=160, y=270, width=280)
-    Button(R4, image=report_img, bd=0, command=lambda: report(R4, division, username)).place(x=160, y=360, width=280)
-    Button(R4, image=view_img, bd=0, command=lambda: view(R4, division, username)).place(x=160, y=450, width=280)
+    Button(R4, bg="#ffcb74", text="Take Attendance", fg="#000",font=("Helvetica", 24, 'italic'), bd=4, command=lambda: take_attendance(R4, division, username)).place(x=160, y=180, width=280, height=80)
+    Button(R4, bg="#ffcb74", text="Edit Attendance", fg="#000",font=("Helvetica", 24, 'italic'), bd=4, command=lambda: edit(R4, division, username)).place(x=160, y=270, width=280, height=80)
+    Button(R4, bg="#ffcb74", text="Report", bd=4, fg="#000",font=("Helvetica", 24, 'italic'), command=lambda: report(R4, division, username)).place(x=160, y=360, width=280, height=80)
+    Button(R4, bg="#ffcb74", text="View", bd=4, fg="#000", font=("Helvetica", 24, 'italic'), command=lambda: view(R4, division, username)).place(x=160, y=450, width=280, height=80)
 
     Label(R4, text='Date: {}'.format(date), font=("Times", 14),bg='#efee9d').place(x=50, y=40)
     Label(R4, text='Class: {}'.format(division), font=("Times", 14),bg='#efee9d').place(x=50, y=80)
