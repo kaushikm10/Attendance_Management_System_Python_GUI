@@ -22,11 +22,12 @@ def take_attendance(win, division, username):
 
     win.destroy()
     root = Tk()
-    root.geometry("1000x1000+0+0")
-    container = Frame(root)
-    canvas = Canvas(container,height=700)
-    scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
-    scrollable_frame = Frame(canvas)
+    root.geometry("600x600+0+0")
+    root['bg']='#efee9d'
+    container = Frame(root,bg='#efee9d')
+    canvas = Canvas(container,height=500, width=470,bg='#efee9d')
+    scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview,bg='#efee9d')
+    scrollable_frame = Frame(canvas,bg='#efee9d')
 
     scrollable_frame.bind(
         "<Configure>",
@@ -39,7 +40,7 @@ def take_attendance(win, division, username):
     canvas.configure(yscrollcommand=scrollbar.set)
 
     for i in range(rows):
-        Label(scrollable_frame, text=df.loc[i, 'Name of Student']+"   ").pack()
+        Label(scrollable_frame, text=df.loc[i, 'Name of Student']+"   ",bg='#efee9d').pack()
         Label(scrollable_frame, text=df.loc[i, 'Roll No.']).pack()
         l = ('A', 'P')
         var = StringVar()
@@ -58,7 +59,7 @@ def take_attendance(win, division, username):
     df.to_csv("{}.csv".format(division),index=False)
 
 
-def edit(win, date, division, username):
+def edit(win, division, username):
 
     df = pd.read_csv("{}.csv".format(division))
 
@@ -147,8 +148,10 @@ def report(win,division, username):
 
     month_var.set('Month')
     year_var.set('Year')
-    month_menu = OptionMenu(report, month_var, *month_list).place(x=140, y=50)
-    year_menu = OptionMenu(report, year_var, *year_list).place(x=230, y=50)
+    month_menu = OptionMenu(report, month_var, *month_list)
+    month_menu.place(x=140, y=50)
+    year_menu = OptionMenu(report, year_var, *year_list)
+    year_menu.place(x=230, y=50)
     submit_button = Button(report, text='Submit', font=("Times", 12),command=check_date).place(x=150, y=100)
     report.mainloop()
 
@@ -282,7 +285,7 @@ def main_window(division, username):
     view_img = ImageTk.PhotoImage(Image.open("view.PNG"))
 
     Button(R4, image=new_attend_img, bd=0, command=lambda: take_attendance(R4, division, username)).place(x=160, y=180, width=280)
-    Button(R4, image=edit_img, bd=0, command=lambda: edit(R4, date, division, username)).place(x=160, y=270, width=280)
+    Button(R4, image=edit_img, bd=0, command=lambda: edit(R4,division, username)).place(x=160, y=270, width=280)
     Button(R4, image=report_img, bd=0, command=lambda: report(R4, division, username)).place(x=160, y=360, width=280)
     Button(R4, image=view_img, bd=0, command=lambda: view(R4, division, username)).place(x=160, y=450, width=280)
 
