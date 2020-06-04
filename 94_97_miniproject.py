@@ -19,7 +19,8 @@ def take_attendance(win, division, username):
     def setAttendance():
         for i in range(rows):
             df.loc[i, date]=vars[i].get()
-
+        df.to_csv("{}.csv".format(division), index=False)
+        messagebox.showinfo("Info", "Attendance Recorded")
     def logout(win):
         win.destroy()
         login()
@@ -70,7 +71,7 @@ def take_attendance(win, division, username):
 
     submit_button = Button(root, text='Submit', font=("Times", 12),bg='#ffcb74', command=setAttendance).place(x=280,y=520)
     root.mainloop()
-    df.to_csv("{}.csv".format(division),index=False)
+
 
 
 def edit(win, division, username):
@@ -148,7 +149,7 @@ def edit(win, division, username):
     attendance = StringVar()
     Label(R5, text='Attendance', font=("Times", 20, 'italic'),bg='#efee9d').place(x=200, y=315)
     om=OptionMenu(R5, attendance, 'A', 'P')
-    om.place(x=350, y=230)
+    om.place(x=350, y=320)
     om.config(bg='#ffcb74')
     attendance.set("P")
     Button(R5, text='Edit Attendance',bg='#ffcb74', command=check_details).place(x=230, y=370)
